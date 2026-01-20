@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled4/features/auth/presentation/widgets/customButton.dart';
+import '../../../Home/auth/presentation/pages/Homepage.dart';
 import '../bloc/login_cubit.dart';
 import '../bloc/login_state.dart';
 import '../widgets/TextField.dart';
@@ -17,9 +18,8 @@ class Login extends StatefulWidget {
 class _LoginPageState extends State<Login> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  bool isPasswordHidden = true;
-
   final _formKey = GlobalKey<FormState>();
+  bool isPasswordHidden = true;
 
   @override
   Widget build(BuildContext context) {
@@ -31,22 +31,23 @@ class _LoginPageState extends State<Login> {
       body: BlocConsumer<LoginCubit, login_state>(
         listener: (context, state) {
           if (state is LoginSuccess) {
-            ScaffoldMessenger.of(
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Login Successful ✅')),
+            );
+            Navigator.pushReplacement(
               context,
-            ).showSnackBar(const SnackBar(content: Text('Login Successful ✅')));
-          }
-
-          if (state is LoginError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+              MaterialPageRoute(builder: (_) => const Homepage()),
+            );
+          } else if (state is LoginError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
           }
         },
         builder: (context, state) {
           final cubit = context.read<LoginCubit>();
 
-        return
-          SingleChildScrollView(
+          return SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: width * 0.08),
               child: Form(
@@ -66,6 +67,7 @@ class _LoginPageState extends State<Login> {
                     ),
                     SizedBox(height: height * 0.05),
 
+                    // Email Field
                     CustomTextField(
                       label: "Email",
                       icon: Icons.email,
@@ -77,7 +79,6 @@ class _LoginPageState extends State<Login> {
                         return null;
                       },
                     ),
-
                     SizedBox(height: height * 0.03),
 
                     CustomTextField(
@@ -92,7 +93,6 @@ class _LoginPageState extends State<Login> {
                         return null;
                       },
                     ),
-
                     SizedBox(height: height * 0.02),
 
                     Align(
@@ -120,7 +120,9 @@ class _LoginPageState extends State<Login> {
                     CustomButton(
                       text: "Login",
                       isLoading: state is LoginLoading,
-                      onPressed: () {
+                      onPressed: state is LoginLoading
+                          ? null
+                          : () {
                         if (_formKey.currentState!.validate()) {
                           cubit.login(
                             email: emailController.text.trim(),
@@ -129,7 +131,6 @@ class _LoginPageState extends State<Login> {
                         }
                       },
                     ),
-
                     SizedBox(height: height * 0.03),
 
                     ElevatedButton(
@@ -163,7 +164,6 @@ class _LoginPageState extends State<Login> {
                         ],
                       ),
                     ),
-
                     SizedBox(height: height * 0.02),
 
                     Row(
@@ -181,7 +181,7 @@ class _LoginPageState extends State<Login> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SignUpPage(),
+                                builder: (context) => const SignUpPage(),
                               ),
                             );
                           },

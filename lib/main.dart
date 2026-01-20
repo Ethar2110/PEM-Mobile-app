@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'features/auth/presentation/bloc/signUp_cubit.dart';
 import 'firebase_options.dart';
 import 'features/auth/presentation/pages/Login.dart';
@@ -34,7 +33,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: const Login(),
+        home: Login(),
       ),
     );
   }

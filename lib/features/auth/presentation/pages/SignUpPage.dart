@@ -5,6 +5,7 @@ import '../bloc/signUp_cubit.dart';
 import '../bloc/signUp_state.dart';
 import '../widgets/TextField.dart';
 import '../widgets/customButton.dart';
+import 'Login.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -18,7 +19,6 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -40,11 +40,13 @@ class _SignUpPageState extends State<SignUpPage> {
       listener: (context, state) {
         if (state is SignUpSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Account created successfully ✅"),
-            ),
+            const SnackBar(content: Text("Account created successfully ✅")),
           );
-          Navigator.pop(context);
+          // الانتقال لصفحة Login بعد SignUp
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const Login()),
+          );
         } else if (state is SignUpError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
@@ -71,7 +73,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: Form(
                     key: _formKey,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(height: height * 0.05),
@@ -83,7 +84,6 @@ class _SignUpPageState extends State<SignUpPage> {
                             color: Colors.green,
                             fontWeight: FontWeight.bold,
                           ),
-                          textAlign: TextAlign.center,
                         ),
 
                         SizedBox(height: height * 0.02),
@@ -158,30 +158,12 @@ class _SignUpPageState extends State<SignUpPage> {
                               : () {
                             if (_formKey.currentState!.validate()) {
                               context.read<SignUpCubit>().signUp(
-                                email:
-                                emailController.text.trim(),
-                                password:
-                                passwordController.text.trim(),
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim(), username: '', phone: '',
                               );
                             }
                           },
                         ),
-
-                        SizedBox(height: height * 0.025),
-
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Text(
-                            "Back to Login",
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: width * 0.04,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: height * 0.05),
                       ],
                     ),
                   ),
