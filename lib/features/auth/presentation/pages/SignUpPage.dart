@@ -1,146 +1,160 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/signUp_cubit.dart';
+import '../bloc/signUp_state.dart';
+import '../widgets/TextField.dart';
+import '../widgets/customButton.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
   @override
-  State<SignUpPage> createState() => _ResetPasswordPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _ResetPasswordPageState extends State<SignUpPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool isPasswordHidden = true;
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.green),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 400),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * 0.08),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: height * 0.05),
-                  Text(
-                    'Create Account',
-                    style: TextStyle(
-                      fontSize: width * 0.08,
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: height * 0.020),
-                  TextFormField(
-                    controller: emailController,
-                    style: TextStyle(color: Colors.white, fontSize: width * 0.045),
-                    decoration: InputDecoration(
-                      labelText: "Email",
-                      labelStyle: TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.green),
-                      ),
-                      prefixIcon: Icon(Icons.email, color: Colors.green),
-                    ),
-                  ),
-                  SizedBox(height: height * 0.03),
+    return BlocConsumer<SignUpCubit, SignUpState>(
+      listener: (context, state) {
+        if (state is SignUpSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Account created successfully ✅"),
+            ),
+          );
+          Navigator.pop(context);
+        } else if (state is SignUpError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.green),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          body: Center(
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.08),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: height * 0.05),
 
-                  TextFormField(
-                    controller: passwordController,
-                    obscureText: isPasswordHidden,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                      labelStyle: TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.green),
-                      ),
-                      prefixIcon: Icon(Icons.lock, color: Colors.green),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          isPasswordHidden ? Icons.visibility_off : Icons.visibility,
-                          color: Colors.green,
+                        Text(
+                          'Create Account',
+                          style: TextStyle(
+                            fontSize: width * 0.08,
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        onPressed: () {
-                          setState(() {
-                            isPasswordHidden = !isPasswordHidden;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
 
-                  SizedBox(height: height * 0.03),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding: EdgeInsets.symmetric(
-                          vertical: height * 0.02,
-                          horizontal: width * 0.25
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: width * 0.045,
-                        fontWeight: FontWeight.bold,
-                      ),
+                        SizedBox(height: height * 0.02),
+
+                        CustomTextField(
+                          label: "Email",
+                          icon: Icons.email,
+                          controller: emailController,
+                          fontSize: width * 0.045,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        SizedBox(height: height * 0.03),
+
+                        CustomTextField(
+                          label: "Password",
+                          icon: Icons.lock,
+                          isPassword: true,
+                          controller: passwordController,
+                          fontSize: width * 0.045,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        SizedBox(height: height * 0.03),
+
+                        CustomButton(
+                          text: "Sign Up",
+                          isLoading: state is SignUpLoading,
+                          onPressed: state is SignUpLoading
+                              ? null
+                              : () {
+                            if (_formKey.currentState!.validate()) {
+                              context.read<SignUpCubit>().signUp(
+                                email:
+                                emailController.text.trim(),
+                                password:
+                                passwordController.text.trim(),
+                              );
+                            }
+                          },
+                        ),
+
+                        SizedBox(height: height * 0.025),
+
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Text(
+                            "Back to Login",
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: width * 0.04,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: height * 0.05),
+                      ],
                     ),
                   ),
-                  SizedBox(height: height * 0.025),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Text(
-                      "Back to Login",
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: width * 0.04,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: height * 0.05),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
-

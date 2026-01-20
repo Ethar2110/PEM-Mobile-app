@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/forgetpassword_cubit.dart';
+import '../widgets/TextField.dart';
+import '../widgets/customButton.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -8,10 +13,14 @@ class ResetPasswordPage extends StatefulWidget {
 }
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
+
   final TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ForgetPasswordCubit>();
+
+
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
@@ -55,48 +64,46 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: height * 0.02),
-                  TextFormField(
+                  CustomTextField(
+                    label: "Email",
+                    icon: Icons.email,
                     controller: emailController,
-                    style: TextStyle(color: Colors.white, fontSize: width * 0.045),
-                    decoration: InputDecoration(
-                      labelText: "Email",
-                      labelStyle: TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.green),
-                      ),
-                      prefixIcon: Icon(Icons.email, color: Colors.green),
-                    ),
+                    fontSize: width * 0.045,
                   ),
+
                   SizedBox(height: height * 0.03),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding: EdgeInsets.symmetric(
-                        vertical: height * 0.02,
-                        horizontal: width * 0.25
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text(
-                      "Reset Password",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: width * 0.045,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+
+
+                  BlocConsumer<ForgetPasswordCubit, ForgetPasswordState>(
+                    listener: (context, state) {
+                      if (state is ForgetPasswordSuccess) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Reset link sent! ✅")),
+                        );
+                      } else if (state is ForgetPasswordError) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.message)),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return CustomButton(
+                        text: "Reset Password",
+                        isLoading: state is ForgetPasswordLoading,
+                        onPressed: () {
+                          if (state is! ForgetPasswordLoading) {
+                            context.read<ForgetPasswordCubit>().resetPassword(
+                              emailController.text,
+                            );
+                          }
+                        },
+                      );
+                    },
                   ),
+
+
+
+
                   SizedBox(height: height * 0.025),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),

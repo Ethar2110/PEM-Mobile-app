@@ -9,15 +9,16 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
 
   final TextEditingController emailController = TextEditingController();
 
-  Future<void> resetPassword() async {
+  Future<void> resetPassword(String email) async {
     emit(ForgetPasswordLoading());
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(
-        email: emailController.text.trim(),
+        email: email.trim(),
       );
       emit(ForgetPasswordSuccess());
     } catch (e) {
       emit(ForgetPasswordError(e.toString()));
     }
   }
+
 }
