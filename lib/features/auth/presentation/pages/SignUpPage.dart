@@ -16,6 +16,9 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -23,6 +26,8 @@ class _SignUpPageState extends State<SignUpPage> {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    usernameController.dispose();
+    phoneController.dispose();
     super.dispose();
   }
 
@@ -84,6 +89,21 @@ class _SignUpPageState extends State<SignUpPage> {
                         SizedBox(height: height * 0.02),
 
                         CustomTextField(
+                          label: "Username",
+                          icon: Icons.person,
+                          controller: usernameController,
+                          fontSize: width * 0.045,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a username';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        SizedBox(height: height * 0.03),
+
+                        CustomTextField(
                           label: "Email",
                           icon: Icons.email,
                           controller: emailController,
@@ -107,6 +127,22 @@ class _SignUpPageState extends State<SignUpPage> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your password';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        SizedBox(height: height * 0.03),
+
+                        CustomTextField(
+                          label: "Phone Number",
+                          icon: Icons.phone,
+                          controller: phoneController,
+                          fontSize: width * 0.045,
+                          keyboardType: TextInputType.phone,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your phone number';
                             }
                             return null;
                           },
