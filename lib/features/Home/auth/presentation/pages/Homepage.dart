@@ -44,6 +44,7 @@ class _HomepageState extends State<Homepage> {
                 backgroundColor: Colors.grey,
                 child: Icon(Icons.person, color: Colors.white),
               ),
+
             ),
             const SizedBox(width: 10),
             const Text("Welcome", style: TextStyle(color: Colors.white)),

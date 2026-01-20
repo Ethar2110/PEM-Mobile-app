@@ -9,6 +9,7 @@ class LoginCubit extends Cubit<login_state> {
     required String email,
     required String password,
   }) async {
+
     emit(LoginLoading());
 
     try {

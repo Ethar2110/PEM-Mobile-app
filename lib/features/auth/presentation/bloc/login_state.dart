@@ -10,3 +10,4 @@ class LoginError extends login_state {
   final String message;
   LoginError(this.message);
 }
+

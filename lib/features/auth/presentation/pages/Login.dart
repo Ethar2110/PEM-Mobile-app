@@ -19,6 +19,7 @@ class _LoginPageState extends State<Login> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
   bool isPasswordHidden = true;
 
   @override
