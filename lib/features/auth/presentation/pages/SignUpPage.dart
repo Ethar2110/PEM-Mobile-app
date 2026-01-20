@@ -42,7 +42,6 @@ class _SignUpPageState extends State<SignUpPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Account created successfully ✅")),
           );
-          // الانتقال لصفحة Login بعد SignUp
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const Login()),
@@ -159,7 +158,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             if (_formKey.currentState!.validate()) {
                               context.read<SignUpCubit>().signUp(
                                 email: emailController.text.trim(),
-                                password: passwordController.text.trim(), username: '', phone: '',
+                                password: passwordController.text.trim(),
+                                username: usernameController.text.trim(),
+                                phone: phoneController.text.trim(),
                               );
                             }
                           },

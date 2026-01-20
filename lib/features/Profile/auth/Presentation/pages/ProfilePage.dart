@@ -80,8 +80,11 @@ class _ProfilePageState extends State<Profilepage> {
                   ),
                 ),
                 SizedBox(height: height * 0.02),
+
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _showEditProfileSheet(context);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     shape: RoundedRectangleBorder(
@@ -117,6 +120,108 @@ class _ProfilePageState extends State<Profilepage> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showEditProfileSheet(BuildContext context) {
+    final nameController = TextEditingController(text: username);
+    final emailController = TextEditingController(text: email);
+    final phoneController = TextEditingController(text: phone);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.black,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 16,
+          right: 16,
+          top: 16,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Edit Profile",
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            TextField(
+              controller: nameController,
+              decoration: InputDecoration(
+                labelText: "Username",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: emailController,
+              decoration: InputDecoration(
+                labelText: "Email",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: phoneController,
+              decoration: InputDecoration(
+                labelText: "Phone",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            ElevatedButton(
+              onPressed: () async {
+                final uid = FirebaseAuth.instance.currentUser!.uid;
+
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(uid)
+                    .update({
+                  'username': nameController.text,
+                  'email': emailController.text,
+                  'phone': phoneController.text,
+                });
+
+                setState(() {
+                  username = nameController.text;
+                  email = emailController.text;
+                  phone = phoneController.text;
+                });
+
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
+              ),
+              child: const Text("Save Changes"),
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );
