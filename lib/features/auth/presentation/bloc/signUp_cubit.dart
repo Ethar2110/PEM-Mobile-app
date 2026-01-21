@@ -32,6 +32,7 @@ class SignUpCubit extends Cubit<SignUpState> {
         });
 
 
+
         print("FIRESTORE WRITE SUCCESS");
         emit(SignUpSuccess());
 

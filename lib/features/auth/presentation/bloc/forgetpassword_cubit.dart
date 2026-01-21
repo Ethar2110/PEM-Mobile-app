@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 part 'forgetpassword_state.dart';
 
-
 class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
   ForgetPasswordCubit() : super(ForgetPasswordInitial());
 
