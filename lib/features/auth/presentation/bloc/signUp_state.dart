@@ -11,3 +11,4 @@ class SignUpError extends SignUpState {
   SignUpError(this.message);
 }
 
+

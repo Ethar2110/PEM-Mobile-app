@@ -31,6 +31,7 @@ class SignUpCubit extends Cubit<SignUpState> {
           'phone': phone,
         });
 
+
         print("FIRESTORE WRITE SUCCESS");
         emit(SignUpSuccess());
 

@@ -4,6 +4,7 @@ abstract class ForgetPasswordState {}
 
 class ForgetPasswordInitial extends ForgetPasswordState {}
 
+
 class ForgetPasswordLoading extends ForgetPasswordState {}
 
 class ForgetPasswordSuccess extends ForgetPasswordState {}
