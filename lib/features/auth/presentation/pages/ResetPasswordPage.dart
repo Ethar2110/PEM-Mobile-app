@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/utils/validators.dart';
 import '../bloc/forgetpassword_cubit.dart';
 import '../widgets/TextField.dart';
 import '../widgets/customButton.dart';
@@ -71,6 +72,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     icon: Icons.email,
                     controller: emailController,
                     fontSize: width * 0.045,
+                    validator: Validators.email,
                   ),
 
                   SizedBox(height: height * 0.03),

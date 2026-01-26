@@ -24,7 +24,7 @@ class BiometricCubit extends Cubit<BiometricState> {
     }
   }
 
-  Future<void> authenticate() async {
+  Future<void> authenticate(String uid) async {
     try {
       final bool didAuthenticate = await _auth.authenticate(
         localizedReason: 'Authenticate using fingerprint',
@@ -32,7 +32,7 @@ class BiometricCubit extends Cubit<BiometricState> {
       );
 
       if (didAuthenticate) {
-        emit(BiometricAuthenticated());
+        emit(BiometricAuthenticated(uid: uid));
       } else {
         emit(BiometricFailed("Authentication failed"));
       }
@@ -40,5 +40,6 @@ class BiometricCubit extends Cubit<BiometricState> {
       emit(BiometricFailed("Something went wrong"));
     }
   }
+
 
 }

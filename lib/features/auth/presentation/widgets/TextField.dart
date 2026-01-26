@@ -8,6 +8,9 @@ class CustomTextField extends StatefulWidget {
   final String? Function(String?)? validator;
   final double fontSize;
   final TextInputType keyboardType;
+  final void Function(String)? onChanged;
+  final bool isEmail;
+
 
 
   const CustomTextField({
@@ -19,6 +22,9 @@ class CustomTextField extends StatefulWidget {
     this.validator,
     this.fontSize = 18,
     this.keyboardType = TextInputType.text,
+    this.onChanged,
+    this.isEmail = false,
+
   });
 
   @override
@@ -45,6 +51,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         fontSize: widget.fontSize,
       ),
       validator: widget.validator,
+      onChanged: widget.onChanged,
       decoration: InputDecoration(
         labelText: widget.label,
         labelStyle: const TextStyle(color: Colors.grey),

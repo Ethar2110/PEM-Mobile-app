@@ -9,9 +9,14 @@ class BiometricUnavailable extends BiometricState {
   BiometricUnavailable(this.reason);
 }
 
-class BiometricAuthenticated extends BiometricState {}
+class BiometricAuthenticated extends BiometricState {
+  final String uid;
+  BiometricAuthenticated({required this.uid});
+}
 
 class BiometricFailed extends BiometricState {
   final String message;
   BiometricFailed(this.message);
 }
+
+
