@@ -414,7 +414,7 @@ class _LoginPageState extends State<Login> {
                             vertical: height * 0.02,
                             horizontal: width * 0.08,
                           ),
-                          backgroundColor: Colors.green,
+                          backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -427,7 +427,7 @@ class _LoginPageState extends State<Login> {
                               builder: (context, state) {
                                 if (state is GoogleAuthLoading) {
                                   return const CircularProgressIndicator(
-                                    color: Colors.white,
+                                    color: Colors.green,
                                   );
                                 }
                                 return Row(
@@ -442,8 +442,9 @@ class _LoginPageState extends State<Login> {
                                     Text(
                                       "Sign In With Google",
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: Colors.black,
                                         fontSize: width * 0.045,
+                                        fontWeight: FontWeight.bold
                                       ),
                                     ),
                                   ],
