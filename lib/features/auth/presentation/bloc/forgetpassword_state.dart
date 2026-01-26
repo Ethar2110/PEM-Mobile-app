@@ -12,3 +12,4 @@ class ForgetPasswordError extends ForgetPasswordState {
   final String message;
   ForgetPasswordError(this.message);
 }
+
