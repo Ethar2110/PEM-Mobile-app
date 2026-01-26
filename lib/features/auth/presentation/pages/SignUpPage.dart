@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/utils/validators.dart';
 import '../bloc/signUp_cubit.dart';
 import '../bloc/signUp_state.dart';
+import '../widgets/Custom_snackBar.dart';
 import '../widgets/TextField.dart';
 import '../widgets/customButton.dart';
 import 'Login.dart';
@@ -40,16 +41,21 @@ class _SignUpPageState extends State<SignUpPage> {
     return BlocConsumer<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state is SignUpSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Account created successfully ✅")),
+          CustomSnackBar.show(
+            context,
+            text: "Account created successfully!",
+            backgroundColor: Colors.green,
           );
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const Login()),
           );
         } else if (state is SignUpError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
+          CustomSnackBar.show(
+            context,
+            text: state.message,
+            icon: Icons.error,
+            backgroundColor: Colors.red,
           );
         }
       },

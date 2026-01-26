@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/utils/validators.dart';
 import '../bloc/forgetpassword_cubit.dart';
+import '../widgets/Custom_snackBar.dart';
 import '../widgets/TextField.dart';
 import '../widgets/customButton.dart';
 class ResetPasswordPage extends StatefulWidget {
@@ -81,12 +82,17 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   BlocConsumer<ForgetPasswordCubit, ForgetPasswordState>(
                     listener: (context, state) {
                       if (state is ForgetPasswordSuccess) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Reset link sent! ✅")),
+                        CustomSnackBar.show(
+                          context,
+                          text: "Reset link sent!",
+                          backgroundColor: Colors.green,
                         );
                       } else if (state is ForgetPasswordError) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
+                        CustomSnackBar.show(
+                          context,
+                          text: state.message,
+                          icon: Icons.error,
+                          backgroundColor: Colors.red,
                         );
                       }
                     },

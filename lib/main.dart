@@ -38,12 +38,6 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ForgetPasswordCubit()),
         BlocProvider(create: (_) => SignUpCubit()),
         BlocProvider(create: (_) => LogoutCubit()),
-      ],
-      child: MaterialApp(debugShowCheckedModeBanner: false, home: Login()),
-        BlocProvider(
-          create: (_) => SignUpCubit(),
-        ),
-
         BlocProvider(
           create: (_) => SignInWithGoogleCubit(),
         ),
