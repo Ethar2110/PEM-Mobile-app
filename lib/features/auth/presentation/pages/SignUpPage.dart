@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/utils/validators.dart';
 import '../bloc/signUp_cubit.dart';
 import '../bloc/signUp_state.dart';
 import '../widgets/TextField.dart';
@@ -92,12 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           icon: Icons.person,
                           controller: usernameController,
                           fontSize: width * 0.045,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a username';
-                            }
-                            return null;
-                          },
+                          validator: Validators.username
                         ),
 
                         SizedBox(height: height * 0.03),
@@ -107,12 +103,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           icon: Icons.email,
                           controller: emailController,
                           fontSize: width * 0.045,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            return null;
-                          },
+                          validator: Validators.email
                         ),
 
                         SizedBox(height: height * 0.03),
@@ -123,12 +114,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           isPassword: true,
                           controller: passwordController,
                           fontSize: width * 0.045,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            return null;
-                          },
+                          validator: Validators.password
                         ),
 
                         SizedBox(height: height * 0.03),
@@ -139,12 +125,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           controller: phoneController,
                           fontSize: width * 0.045,
                           keyboardType: TextInputType.phone,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your phone number';
-                            }
-                            return null;
-                          },
+                          validator: Validators.phone
                         ),
 
                         SizedBox(height: height * 0.03),
@@ -165,13 +146,14 @@ class _SignUpPageState extends State<SignUpPage> {
                             }
                           },
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+        ],
+        ),
+        ),
+        ),
           ),
+        )
+
+          )
         );
       },
     );

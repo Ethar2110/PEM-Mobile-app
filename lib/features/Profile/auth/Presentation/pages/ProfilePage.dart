@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:untitled4/features/auth/presentation/bloc/logout_cubit.dart';
+import '../../../../auth/presentation/bloc/fingerPringVal_cubit.dart';
+import '../../../../auth/presentation/bloc/fingerPrint_state.dart';
+import '../../../../auth/presentation/pages/Login.dart';
 
 class Profilepage extends StatefulWidget {
   const Profilepage({super.key});
@@ -21,7 +26,19 @@ class _ProfilePageState extends State<Profilepage> {
   void initState() {
     super.initState();
     fetchUserData();
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      context.read<FingerprintCubit>().loadFingerprintStatus(uid);
+    }
   }
+
+  // void _loadFingerprintStatus() async {
+  //   final uid = FirebaseAuth.instance.currentUser?.uid;
+  //   if (uid != null) {
+  //     await context.read<FingerprintCubit>().loadFingerprintStatus(uid);
+  //   }
+  // }
+
 
   Future<void> fetchUserData() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
@@ -116,7 +133,29 @@ class _ProfilePageState extends State<Profilepage> {
                       });
                     }),
                 SizedBox(height: height * 0.03),
-                _buildLogoutRow(Icons.logout, "Logout"),
+
+                BlocBuilder<FingerprintCubit, FingerprintState>(
+                  builder: (context, state) {
+                    return _buildSwitchRow(
+                      Icons.fingerprint,
+                      "Fingerprint login",
+                      state.enabled,
+                          (value) async {
+                            final uid = FirebaseAuth.instance.currentUser?.uid;
+                            if (uid == null) return;
+
+                        await context.read<FingerprintCubit>().setEnabled(uid, value);
+                      },
+                    );
+                  },
+                ),
+
+                SizedBox(height: height * 0.03),
+
+
+                _buildLogoutRow(Icons.logout, "Logout", ),
+
+
               ],
             ),
           ),
@@ -265,8 +304,17 @@ class _ProfilePageState extends State<Profilepage> {
       child: ListTile(
         leading: Icon(icon, color: Colors.red),
         title: Text(title, style: const TextStyle(color: Colors.red)),
-        onTap: () {},
+        onTap: () async {
+          await context.read<LogoutCubit>().signOut();
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const Login()),
+                (route) => false,
+          );
+        },
       ),
     );
   }
+
 }

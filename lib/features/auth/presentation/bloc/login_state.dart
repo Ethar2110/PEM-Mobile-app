@@ -10,6 +10,23 @@ class LoginError extends login_state {
   final String message;
   LoginError(this.message);
 }
+class FingerprintStatusLoaded extends login_state {
+  final bool isEnabled;
+  final String? uid;
+
+  FingerprintStatusLoaded({
+    required this.isEnabled,
+    required this.uid,
+  });
+}
+
+class FingerprintNotLinked extends login_state {}
+
+class FingerprintLinked extends login_state {
+  final String uid;
+  FingerprintLinked({required this.uid});
+}
+
 
 
 

@@ -38,8 +38,6 @@ class _HomepageState extends State<Homepage> {
                     builder: (context) => Profilepage(),
                   ),
                 );
-
-
               },
               child: const CircleAvatar(
                 radius: 18,

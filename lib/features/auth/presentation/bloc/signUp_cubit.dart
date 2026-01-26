@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../Data/datasources/local_storage.dart';
+import 'fingerPringVal_cubit.dart';
 import 'signUp_state.dart';
 
 class SignUpCubit extends Cubit<SignUpState> {
@@ -49,5 +51,8 @@ class SignUpCubit extends Cubit<SignUpState> {
       emit(SignUpError('Unexpected error: ${e.toString()}'));
     }
   }
+
+
+
 
 }
