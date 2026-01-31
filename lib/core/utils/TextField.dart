@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatefulWidget {
   final String label;
-  final IconData icon;
+  final IconData? icon;
   final bool isPassword;
   final TextEditingController controller;
   final String? Function(String?)? validator;
@@ -10,13 +10,14 @@ class CustomTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final void Function(String)? onChanged;
   final bool isEmail;
+  final VoidCallback? onTap;
 
 
 
   const CustomTextField({
     super.key,
     required this.label,
-    required this.icon,
+    this.icon,
     this.isPassword = false,
     required this.controller,
     this.validator,
@@ -24,6 +25,7 @@ class CustomTextField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.onChanged,
     this.isEmail = false,
+    this.onTap
 
   });
 
@@ -43,6 +45,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onTap: widget.onTap,
+      readOnly: widget.onTap != null, // makes the field non-editable if onTap is provided
       controller: widget.controller,
       obscureText: _obscureText,
       keyboardType: widget.keyboardType,
@@ -55,7 +59,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
       decoration: InputDecoration(
         labelText: widget.label,
         labelStyle: const TextStyle(color: Colors.grey),
-        prefixIcon: Icon(widget.icon, color: Colors.green),
+        prefixIcon: widget.icon != null
+            ? Icon(widget.icon, color: Colors.green)
+            : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -79,7 +85,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
             });
           },
         )
+            : widget.onTap != null
+            ? IconButton(
+          icon: const Icon(Icons.calendar_month, color: Colors.grey),
+          onPressed: widget.onTap,
+        )
             : null,
+
       ),
     );
   }

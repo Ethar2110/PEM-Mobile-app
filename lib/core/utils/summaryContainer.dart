@@ -32,8 +32,18 @@ class SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final isLargeScreen = screenWidth > 400;
+
+    final cardHeight = height * (screenWidth / 375).clamp(0.85, 1.2);
+
+    final currentTitleSize = isLargeScreen ? titleSize + 2 : titleSize;
+    final currentValueSize = isLargeScreen ? valueSize + 2 : valueSize;
+
     return Container(
-      height: height,
+      height: cardHeight,
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         color: backgroundColor,
@@ -42,21 +52,29 @@ class SummaryCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: titleSize,
-                fontWeight: FontWeight.bold,
-                color: titleColor,
+            // Title text
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: currentTitleSize,
+                  fontWeight: FontWeight.bold,
+                  color: titleColor,
+                ),
               ),
             ),
             const SizedBox(height: 6),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: valueSize,
-                fontWeight: FontWeight.bold,
-                color: valueColor,
+            // Value text
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: currentValueSize,
+                  fontWeight: FontWeight.bold,
+                  color: valueColor,
+                ),
               ),
             ),
           ],

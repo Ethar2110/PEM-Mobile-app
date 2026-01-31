@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled4/features/auth/presentation/bloc/fingerPrint_state.dart';
-import 'package:untitled4/features/auth/presentation/widgets/customButton.dart';
-import '../../../Home/auth/presentation/pages/Homepage.dart';
-import '../../../core/utils/validators.dart';
+import 'package:untitled4/features/bottom_nav_bar/auth/presentation/pages/BottomNavigationBar.dart';
+import '../../../../core/utils/Custom_snackBar.dart';
+import '../../../../core/utils/TextField.dart';
+import '../../../../core/utils/customButton.dart';
+import '../../../../core/utils/validators.dart';
 import '../../Data/datasources/local_storage.dart';
 import '../bloc/biometric_cubit.dart';
 import '../bloc/biometric_state.dart';
@@ -13,8 +15,6 @@ import '../bloc/login_cubit.dart';
 import '../bloc/login_state.dart';
 import '../bloc/signInWithGoogle_cubit.dart';
 import '../bloc/signInWithGoogle_state.dart';
-import '../widgets/Custom_snackBar.dart';
-import '../widgets/TextField.dart';
 import 'ResetPasswordPage.dart';
 import 'SignUpPage.dart';
 
@@ -77,7 +77,7 @@ class _LoginPageState extends State<Login> {
               if (state is BiometricAuthenticated) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const Homepage()),
+                  MaterialPageRoute(builder: (_) => const BottomNavBar()),
                 );
               }
             },
@@ -136,7 +136,7 @@ class _LoginPageState extends State<Login> {
                 );
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const Homepage()),
+                  MaterialPageRoute(builder: (_) => const BottomNavBar()),
                 );
               } else if (state is GoogleAuthError) {
                 CustomSnackBar.show(
@@ -176,7 +176,7 @@ class _LoginPageState extends State<Login> {
                         Navigator.pop(context);
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => const Homepage()),
+                          MaterialPageRoute(builder: (_) => const BottomNavBar()),
                         );
                       },
                       child: const Text(
@@ -192,7 +192,7 @@ class _LoginPageState extends State<Login> {
                         Navigator.pop(context);
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => const Homepage()),
+                          MaterialPageRoute(builder: (_) => const BottomNavBar()),
                         );
                       },
                       child: const Text(

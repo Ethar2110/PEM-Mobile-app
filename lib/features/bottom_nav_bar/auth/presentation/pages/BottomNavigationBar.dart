@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:untitled4/features/home/presentation/pages/home.dart';
 
-import '../../../../Profile/auth/Presentation/pages/ProfilePage.dart';
-
-class Homepage extends StatefulWidget {
-  const Homepage({Key? key}) : super(key: key);
+class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({Key? key}) : super(key: key);
 
   @override
-  State<Homepage> createState() => _HomepageState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _HomepageState extends State<Homepage> {
+class _BottomNavBarState extends State<BottomNavBar> {
   int currentIndex = 0;
 
   final List<Widget> screens = const [
-    Center(child: Text("Home")),
+    HomePage(),
     Center(child: Text("Income")),
     Center(child: Text("Expenses")),
     Center(child: Text("Savings")),
@@ -23,41 +22,6 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        title: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Profilepage(),
-                  ),
-                );
-              },
-              child: const CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.grey,
-                child: Icon(Icons.person, color: Colors.white),
-              ),
-
-            ),
-            const SizedBox(width: 10),
-            const Text("Welcome", style: TextStyle(color: Colors.white)),
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications_none, color: Colors.white),
-          ),
-        ],
-      ),
-
       body: screens[currentIndex],
 
       bottomNavigationBar: BottomNavigationBar(
