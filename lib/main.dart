@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:untitled4/features/Expenses/presentation/pages/expensesPage.dart';
+import 'package:untitled4/features/Saving_Goals/presentation/pages/SavingGoalsPage.dart';
+import 'features/Expenses/data/expense_local_datasource.dart';
+import 'features/Expenses/domain/repositories/expense_repo_impl.dart';
+import 'features/Expenses/presentation/bloc/expense_cubit.dart';
 import 'features/auth/presentation/bloc/biometric_cubit.dart';
 import 'features/auth/presentation/bloc/fingerPringVal_cubit.dart';
 import 'features/auth/presentation/bloc/logout_cubit.dart';
 import 'features/auth/presentation/bloc/signUp_cubit.dart';
+import 'features/home/presentation/pages/home.dart';
 import 'firebase_options.dart';
-import 'features/auth/presentation/pages/Login.dart';
 import 'features/auth/presentation/bloc/login_cubit.dart';
 import 'features/auth/presentation/bloc/forgetpassword_cubit.dart';
-import 'features/auth/presentation/bloc/signUp_cubit.dart';
 import 'features/auth/presentation/bloc/signInWithGoogle_cubit.dart';
 
 
@@ -41,10 +45,17 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => SignInWithGoogleCubit(),
         ),
+        BlocProvider<ExpenseCubit>(
+          create: (context) {
+            final localDataSource = ExpenseLocalDataSource();
+            final repository = ExpenseRepositoryImpl(localDataSource);
+            return ExpenseCubit(repository);
+          },
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: const Login(),
+        home: HomePage(),
       ),
     );
   }

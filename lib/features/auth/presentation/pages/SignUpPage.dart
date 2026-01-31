@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/utils/validators.dart';
+import '../../../../core/utils/Custom_snackBar.dart';
+import '../../../../core/utils/TextField.dart';
+import '../../../../core/utils/customButton.dart';
+import '../../../../core/utils/validators.dart';
 import '../bloc/signUp_cubit.dart';
 import '../bloc/signUp_state.dart';
-import '../widgets/Custom_snackBar.dart';
-import '../widgets/TextField.dart';
-import '../widgets/customButton.dart';
 import 'Login.dart';
 
 class SignUpPage extends StatefulWidget {
