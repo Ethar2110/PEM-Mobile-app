@@ -16,14 +16,12 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(SignUpLoading());
 
     try {
-      // 1️⃣ Create the user in Firebase Auth
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
       print("AUTH SUCCESS UID = ${userCredential.user!.uid}");
 
       try {
-        // 2️⃣ Save user info in Firestore
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredential.user!.uid)
@@ -39,7 +37,6 @@ class SignUpCubit extends Cubit<SignUpState> {
         emit(SignUpSuccess());
 
       } catch (firestoreError) {
-        // If Firestore fails, delete the auth user to avoid inconsistent state
         await userCredential.user?.delete();
         emit(SignUpError(
             'Failed to save user data: ${firestoreError.toString()}'));
@@ -51,8 +48,4 @@ class SignUpCubit extends Cubit<SignUpState> {
       emit(SignUpError('Unexpected error: ${e.toString()}'));
     }
   }
-
-
-
-
 }

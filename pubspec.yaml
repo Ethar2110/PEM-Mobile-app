@@ -37,6 +37,9 @@ dependencies:
   bloc: ^8.1.0
   google_sign_in: ^6.1.0
   cloud_firestore: ^6.1.1
+  salomon_bottom_bar: ^3.3.2
+  image_picker: ^1.0.7
+
 
 
 

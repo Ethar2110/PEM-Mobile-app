@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled4/features/auth/presentation/bloc/logout_cubit.dart';
 import '../../../../auth/presentation/bloc/fingerPringVal_cubit.dart';
 import '../../../../auth/presentation/bloc/fingerPrint_state.dart';
 import '../../../../auth/presentation/pages/Login.dart';
+import 'dart:io';
 
+File? _imageFile;
 class Profilepage extends StatefulWidget {
   const Profilepage({super.key});
 
@@ -22,6 +26,23 @@ class _ProfilePageState extends State<Profilepage> {
   String username = '';
   String phone = '';
 
+  Future<void> _saveImageToPrefs(String path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_profile_path', path);
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      await _saveImageToPrefs(pickedFile.path);
+
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
   @override
   void initState() {
     super.initState();
@@ -67,9 +88,18 @@ class _ProfilePageState extends State<Profilepage> {
             child: Column(
               children: [
                 SizedBox(height: height * 0.04),
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: AssetImage('assets/images/profile.png'),
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.grey[800],
+                    backgroundImage: _imageFile != null
+                        ? FileImage(_imageFile!)
+                        : const AssetImage('assets/images/profile.png') as ImageProvider,
+                    child: _imageFile == null
+                        ? const Icon(Icons.camera_alt, color: Colors.white, size: 20)
+                        : null,
+                  ),
                 ),
                 SizedBox(height: height * 0.02),
                 Text(
