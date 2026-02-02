@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:untitled4/features/Budget/presentation/pages/budgetpage.dart';
+import 'package:untitled4/features/Expenses/presentation/pages/expensesPage.dart';
+import 'package:untitled4/features/Income/presentation/pages/incomepage.dart';
+import 'package:untitled4/features/Saving_Goals/presentation/pages/SavingGoalsPage.dart';
 import 'package:untitled4/features/home/presentation/pages/home.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -13,10 +17,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   final List<Widget> screens = const [
     HomePage(),
-    Center(child: Text("Income")),
-    Center(child: Text("Expenses")),
-    Center(child: Text("Savings")),
-    Center(child: Text("Budget")),
+    incomePage(),
+    expensespage(),
+    SavingGoalspage(),
+    budgetpage(),
   ];
 
   @override

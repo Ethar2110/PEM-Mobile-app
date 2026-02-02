@@ -10,14 +10,14 @@ import '../../../../core/utils/summaryContainer.dart';
 import '../../domain/entities/expense.dart';
 import '../bloc/expense_cubit.dart';
 
-class Expensespage extends StatefulWidget {
-  const Expensespage({super.key});
+class expensespage extends StatefulWidget {
+  const expensespage({super.key});
 
   @override
-  State<Expensespage> createState() => _ExpensespageState();
+  State<expensespage> createState() => _expensespageState();
 }
 
-class _ExpensespageState extends State<Expensespage> {
+class _expensespageState extends State<expensespage> {
   final titleController = TextEditingController();
   final amountController = TextEditingController();
   final ExpenseDate = TextEditingController();

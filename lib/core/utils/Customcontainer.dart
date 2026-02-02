@@ -5,7 +5,6 @@ class Customcontainer extends StatelessWidget {
   final String remainingText;
   final String? price;
 
-
   final double remainingFontSize;
   final Color remainingColor;
 
