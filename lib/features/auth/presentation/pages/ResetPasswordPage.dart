@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/Custom_snackBar.dart';
@@ -51,7 +52,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 children: [
                   SizedBox(height: height * 0.05),
                   Text(
-                    'Reset Your Password',
+                    "reset_your_password".tr(),
                     style: TextStyle(
                       fontSize: width * 0.08,
                       color: Colors.green,
@@ -61,7 +62,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   ),
                   SizedBox(height: height * 0.015),
                   Text(
-                    'Enter your email to receive a reset link',
+                    "enter_email_reset_link".tr(),
                     style: TextStyle(
                       fontSize: width * 0.04,
                       color: Colors.grey,
@@ -70,7 +71,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   ),
                   SizedBox(height: height * 0.02),
                   CustomTextField(
-                    label: "Email",
+                    label: "email".tr(),
                     icon: Icons.email,
                     controller: emailController,
                     fontSize: width * 0.045,
@@ -85,7 +86,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       if (state is ForgetPasswordSuccess) {
                         CustomSnackBar.show(
                           context,
-                          text: "Reset link sent!",
+                          text: "reset_link_sent".tr(),
                           backgroundColor: Colors.green,
                         );
                       } else if (state is ForgetPasswordError) {
@@ -99,7 +100,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     },
                     builder: (context, state) {
                       return CustomButton(
-                        text: "Reset Password",
+                        text: "reset_password".tr(),
                         isLoading: state is ForgetPasswordLoading,
                         onPressed: () {
                           if (state is! ForgetPasswordLoading) {
@@ -119,7 +120,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Text(
-                      "Back to Login",
+                      "back_to_login".tr(),
                       style: TextStyle(
                         color: Colors.green,
                         fontSize: width * 0.04,

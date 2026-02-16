@@ -162,7 +162,7 @@ class _SavingGoalspageState extends State<SavingGoalspage> {
         titleSpacing: screenWidth * 0.05,
         toolbarHeight: screenHeight * 0.08,
         title: Text(
-          "My Expenses",
+          "Saving Goals",
           style: TextStyle(color: Colors.white, fontSize: screenWidth * 0.06),
         ),
         backgroundColor: Colors.black,
@@ -213,7 +213,7 @@ class _SavingGoalspageState extends State<SavingGoalspage> {
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
           left: screenWidth * 0.04,
-          bottom: screenHeight * 0.10,
+          bottom: screenHeight * 0.0,
         ),
         child: CustomButton(
           text: "+ Add Goal",

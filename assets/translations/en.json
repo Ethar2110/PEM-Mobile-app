@@ -1,0 +1,25 @@
+{
+  "welcome_back": "Welcome back",
+  "email": "Email",
+  "password": "Password",
+  "forget_password": "Forget password?",
+  "login": "Login",
+  "fingerprint_disabled": "Fingerprint is disabled",
+  "login_first_enable_fingerprint": "Please login normally first, then enable fingerprint.",
+  "sign_in_google": "Sign in with Google",
+  "dont_have_account": "Don't have an account?",
+  "sign_up": "Sign Up",
+  "reset_your_password": "Reset your password",
+  "enter_email_reset_link": "Enter your email to receive a reset link",
+  "email": "Email",
+  "reset_link_sent": "Reset link sent!",
+  "reset_password": "Reset Password",
+  "back_to_login": "Back to Login",
+  "create_account": "Create Account",
+  "username": "Username",
+  "email": "Email",
+  "password": "Password",
+  "phone_number": "Phone Number",
+  "sign_up": "Sign Up"
+
+}

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -218,7 +219,7 @@ class _LoginPageState extends State<Login> {
                     children: [
                       SizedBox(height: height * 0.2),
                       Text(
-                        'Welcome Back',
+                        'welcome_back'.tr(),
                         style: TextStyle(
                           fontSize: width * 0.09,
                           color: Colors.green,
@@ -229,7 +230,7 @@ class _LoginPageState extends State<Login> {
                       SizedBox(height: height * 0.05),
 
                       CustomTextField(
-                        label: "Email",
+                        label: "email".tr(),
                         icon: Icons.email,
                         controller: emailController,
                         validator: Validators.email,
@@ -245,7 +246,7 @@ class _LoginPageState extends State<Login> {
                       SizedBox(height: height * 0.03),
 
                       CustomTextField(
-                        label: "Password",
+                        label: "password".tr(),
                         icon: Icons.lock,
                         isPassword: true,
                         controller: passwordController,
@@ -265,7 +266,7 @@ class _LoginPageState extends State<Login> {
                             );
                           },
                           child: Text(
-                            "Forget Password?",
+                            "forget_password".tr(),
                             style: TextStyle(
                               color: Colors.blue,
                               fontWeight: FontWeight.bold,
@@ -279,7 +280,7 @@ class _LoginPageState extends State<Login> {
                         children: [
                           Expanded(
                             child: CustomButton(
-                              text: "Login",
+                              text: "login".tr(),
                               isLoading: state is LoginLoading,
                               onPressed: state is LoginLoading
                                   ? null
@@ -334,14 +335,14 @@ class _LoginPageState extends State<Login> {
                                               20,
                                             ),
                                           ),
-                                          title: const Text(
-                                            "Fingerprint is disabled",
+                                          title:  Text(
+                                            "fingerprint_disabled".tr(),
                                             style: TextStyle(
                                               color: Colors.white,
                                             ),
                                           ),
-                                          content: const Text(
-                                            "Please login normally first, then enable fingerprint.",
+                                          content:  Text(
+                                            "login_first_enable_fingerprint".tr(),
                                             style: TextStyle(
                                               color: Colors.grey,
                                             ),
@@ -350,7 +351,7 @@ class _LoginPageState extends State<Login> {
                                             TextButton(
                                               onPressed: () =>
                                                   Navigator.pop(context),
-                                              child: const Text(
+                                              child: Text(
                                                 "OK",
                                                 style: TextStyle(
                                                   color: Colors.green,
@@ -440,7 +441,7 @@ class _LoginPageState extends State<Login> {
                                     ),
                                     SizedBox(width: width * 0.02),
                                     Text(
-                                      "Sign In With Google",
+                                      "sign_in_google".tr(),
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: width * 0.045,
@@ -458,7 +459,7 @@ class _LoginPageState extends State<Login> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Don't have an account? ",
+                            "dont_have_account".tr(),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: width * 0.04,
@@ -474,7 +475,7 @@ class _LoginPageState extends State<Login> {
                               );
                             },
                             child: Text(
-                              "Sign Up",
+                              "sign_up".tr(),
                               style: TextStyle(
                                 color: Colors.blue,
                                 fontWeight: FontWeight.bold,

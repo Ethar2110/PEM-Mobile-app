@@ -276,7 +276,7 @@ class _expensespageState extends State<expensespage> {
       floatingActionButton: Padding(
         padding:EdgeInsets.only(
           left: screenWidth * 0.04,
-          bottom: screenHeight * 0.10,
+          bottom: screenHeight * 0.0,
         ),
         child: CustomButton(
           text: "+ Add Expense",
