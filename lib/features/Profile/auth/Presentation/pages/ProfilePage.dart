@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -149,10 +150,16 @@ class _ProfilePageState extends State<Profilepage> {
                 ),
                 SizedBox(height: height * 0.03),
                 _buildSectionTitle("Preferences"),
-                _buildSwitchRow(Icons.notifications, "Push notifications", pushNotification,
+
+                _buildSwitchRow(Icons.language, "Change language".tr(), pushNotification,
                         (value) {
                       setState(() {
                         pushNotification = value;
+                        if (context.locale.languageCode == 'en') {
+                          context.setLocale(const Locale('ar'));
+                        } else {
+                          context.setLocale(const Locale('en'));
+                        }
                       });
                     }),
                 SizedBox(height: height * 0.03),

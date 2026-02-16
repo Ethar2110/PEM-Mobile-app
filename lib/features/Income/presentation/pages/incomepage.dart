@@ -1,190 +1,190 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/utils/Customcontainer.dart';
 import '../../../../core/utils/CustomButton.dart';
+import '../../../../core/utils/Customcontainer.dart';
 import '../../../../core/utils/summaryContainer.dart';
+import '../../../../core/utils/TextField.dart';
+import '../../../../core/utils/bottom_sheet_helper.dart';
 
 class incomePage extends StatefulWidget {
   const incomePage({super.key});
 
   @override
-  State<incomePage> createState() => _incomePageState();
+  State<incomePage> createState() => _IncomePageState();
 }
 
-class _incomePageState extends State<incomePage> {
-  final List<Map<String, dynamic>> incomeSources = [
-    {"title": "Salary", "date": "08-01-2026", "price": "15,000"},
-    {"title": "Gift", "date": "08-01-2026", "price": "14,500"},
-    {"title": "Freelance", "date": "01-12-2025", "price": "3,500"},
-  ];
-
+class _IncomePageState extends State<incomePage> {
+  final TextEditingController _sourceNameController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF00E676),
-              onPrimary: Colors.black,
-              surface: Color(0xFF1C1C1C),
-              onSurface: Colors.white,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
+  final CollectionReference incomeRef = FirebaseFirestore.instance.collection('incomes');
 
-    if (picked != null) {
-      setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(picked);
-      });
+  Future<void> _saveOrUpdateIncome({String? docId}) async {
+    if (_sourceNameController.text.isNotEmpty && _amountController.text.isNotEmpty) {
+      Map<String, dynamic> data = {
+        "title": _sourceNameController.text,
+        "price": _amountController.text,
+        "date": _dateController.text.isEmpty
+            ? DateFormat('dd-MM-yyyy').format(DateTime.now())
+            : _dateController.text,
+        "timestamp": FieldValue.serverTimestamp(),
+      };
+
+      if (docId == null) {
+        await incomeRef.add(data);
+      } else {
+        await incomeRef.doc(docId).update(data);
+      }
+
+      _sourceNameController.clear();
+      _amountController.clear();
+      _dateController.clear();
+      Navigator.pop(context);
     }
+  }
+
+  void _openIncomeFormSheet({String? docId, String? oldTitle, String? oldPrice, String? oldDate}) {
+    if (docId != null) {
+      _sourceNameController.text = oldTitle ?? "";
+      _amountController.text = oldPrice ?? "";
+      _dateController.text = oldDate ?? "";
+    } else {
+      _sourceNameController.clear();
+      _amountController.clear();
+      _dateController.clear();
+    }
+
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    openCustomSheet(
+      context: context,
+      title: docId == null ? "Add New Income" : "Edit Income",
+      fields: [
+        CustomTextField(
+          label: "Source Name",
+          controller: _sourceNameController,
+          isPassword: false,
+        ),
+        SizedBox(height: screenHeight * 0.015),
+        CustomTextField(
+          label: "Amount",
+          controller: _amountController,
+          isPassword: false,
+          keyboardType: TextInputType.number,
+        ),
+        SizedBox(height: screenHeight * 0.015),
+        CustomTextField(
+          label: "Date",
+          controller: _dateController,
+          isPassword: false,
+          onTap: () async {
+            DateTime? picked = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+              builder: (context, child) => Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: const ColorScheme.dark(
+                    primary: Color(0xFF72E369),
+                    onPrimary: Colors.white,
+                    surface: Color(0xFF101010),
+                    onSurface: Colors.white,
+                  ),
+                ),
+                child: child!,
+              ),
+            );
+            if (picked != null) {
+              setState(() {
+                _dateController.text = DateFormat('dd-MM-yyyy').format(picked);
+              });
+            }
+          },
+        ),
+      ],
+      actionText: docId == null ? "Save" : "Update",
+      onAction: () => _saveOrUpdateIncome(docId: docId),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.black,
-
       appBar: AppBar(
-        titleSpacing: 20,
-        toolbarHeight: 65,
         title: const Text("Income", style: TextStyle(color: Colors.white, fontSize: 24)),
         backgroundColor: Colors.black,
         elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: Colors.grey.withOpacity(0.2)),
-        ),
       ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: incomeRef.orderBy('timestamp', descending: true).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) return const Center(child: Text("Error loading data", style: TextStyle(color: Colors.white)));
+          if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator(color: Color(0xFF00E676)));
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SummaryCard(
-              title: "Total Income this month",
-              value: "\$ 12,500",
-            ),
+          var docs = snapshot.data!.docs;
+          double total = 0;
+          for (var doc in docs) {
+            total += double.tryParse(doc['price'].toString().replaceAll(',', '')) ?? 0;
+          }
 
-            const SizedBox(height: 15),
+          return Padding(
+            padding: EdgeInsets.all(screenWidth * 0.04),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SummaryCard(
+                  title: "Total Income this month",
+                  value: "\$ ${NumberFormat('#,###').format(total)}",
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                const Text("Income Sources", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                SizedBox(height: screenHeight * 0.02),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      var data = docs[index].data() as Map<String, dynamic>;
+                      String docId = docs[index].id;
 
-            const Text(
-              "Income Sources",
-              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 15),
-
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: incomeSources.length,
-              itemBuilder: (context, index) {
-                final item = incomeSources[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Customcontainer(
-                    title: item['title'],
-                    remainingText: item['date'],
-                    price: item['price'],
-                    onEdit: () => print("Edit clicked"),
-                    onDelete: () => print("Delete clicked"),
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: screenHeight * 0.015),
+                        child: Customcontainer(
+                          title: data['title'],
+                          remainingText: data['date'],
+                          price: data['price'],
+                          onEdit: () => _openIncomeFormSheet(
+                            docId: docId,
+                            oldTitle: data['title'],
+                            oldPrice: data['price'],
+                            oldDate: data['date'],
+                          ),
+                          onDelete: () => incomeRef.doc(docId).delete(),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
-
-      floatingActionButton: SizedBox(
-        width: 170,
-        height: 50,
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: screenHeight * 0.01),
         child: CustomButton(
           text: "+ Add Income",
-          onPressed: _openIncomeFormSheet,
-          borderRadius: 25,
+          width: screenWidth * 0.45,
+          height: screenHeight * 0.065,
+          onPressed: () => _openIncomeFormSheet(),
+          borderRadius: screenWidth * 0.05,
         ),
-      ),
-    );
-  }
-
-  void _openIncomeFormSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: const Color(0xFF121212),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-          top: 25, left: 20, right: 20,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Source Name", style: TextStyle(color: Colors.white, fontSize: 16)),
-            const SizedBox(height: 10),
-            _buildInputField("Source Name"),
-
-            const SizedBox(height: 20),
-            const Text("Amount", style: TextStyle(color: Colors.white, fontSize: 16)),
-            const SizedBox(height: 10),
-            _buildInputField("Set Amount", isNumber: true),
-
-            SizedBox(height: 20),
-            const Text("Target Date", style: TextStyle(color: Colors.white, fontSize: 16)),
-             SizedBox(height: 10),
-            _buildInputField(
-              "Set Target Date",
-              isDate: true,
-              controller: _dateController,
-              onTap: () => _selectDate(context),
-            ),
-
-             SizedBox(height: 30),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:  Color(0xFF00E676),
-                  padding:  EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                ),
-                child:  Text("Save", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInputField(String hint, {bool isNumber = false, bool isDate = false, TextEditingController? controller, VoidCallback? onTap}) {
-    return TextField(
-      controller: controller,
-      readOnly: isDate,
-      onTap: onTap,
-      style:  TextStyle(color: Colors.white),
-      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle:  TextStyle(color: Colors.white24),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
-        suffixIcon: isDate ? Icon(Icons.calendar_today, color: Colors.white, size: 18) : null,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
       ),
     );
   }

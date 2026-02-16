@@ -1,8 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:untitled4/features/Expenses/presentation/pages/expensesPage.dart';
 import 'package:untitled4/features/Saving_Goals/presentation/pages/SavingGoalsPage.dart';
+import 'package:untitled4/features/Splashscreen/presentation/pages/SplashscreenPage.dart';
+import 'package:untitled4/features/auth/presentation/pages/Login.dart';
 import 'features/Expenses/data/expense_local_datasource.dart';
 import 'features/Expenses/domain/repositories/expense_repo_impl.dart';
 import 'features/Expenses/presentation/bloc/expense_cubit.dart';
@@ -19,14 +22,22 @@ import 'features/auth/presentation/bloc/signInWithGoogle_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await EasyLocalization.ensureInitialized(); // مهم جدًا
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [Locale('en'), Locale('ar')],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      child: const MyApp(),
+    ),
+  );
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -53,10 +64,14 @@ class MyApp extends StatelessWidget {
           },
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: HomePage(),
-      ),
+      child:  MaterialApp(
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: SplashScreenPage(),
+    ),
+
     );
   }
 }

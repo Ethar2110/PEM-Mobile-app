@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../../../core/utils/Customcontainer.dart';
 import '../../../../core/utils/CustomButton.dart';
+import '../../../../core/utils/TextField.dart';
+import '../../../../core/utils/dropdownFormField.dart';
+import '../../../../core/utils/bottom_sheet_helper.dart';
 
 class budgetpage extends StatefulWidget {
   const budgetpage({super.key});
@@ -10,148 +15,179 @@ class budgetpage extends StatefulWidget {
 }
 
 class _budgetpageState extends State<budgetpage> {
-  final List<Map<String, dynamic>> budgetData = [
-    {"title": "Car", "remaining": "102 remaining", "progress": "350 of 500", "value": 0.7},
-    {"title": "Rent", "remaining": "15 days left", "progress": "800 of 1000", "value": 0.8},
-    {"title": "Savings", "remaining": "Goal nearly reached", "progress": "900 of 1000", "value": 0.9},
-  ];
+  final TextEditingController budgetController = TextEditingController();
 
-  String? selectedCategory;
+  final CollectionReference budgetsRef =
+  FirebaseFirestore.instance.collection('budgets');
+
+  String selectedCategory = "Food";
+  final List<String> categories = ["Food", "Transport", "Shopping", "Bills"];
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.black,
-
       appBar: AppBar(
         titleSpacing: 20,
         toolbarHeight: 65,
-        title: Text("Budget Management", style: TextStyle(color: Colors.white, fontSize: 24)),
+        title: Text(
+          "My Expenses",
+          style: TextStyle(color: Colors.white, fontSize: 24),
+        ),
         backgroundColor: Colors.black,
         elevation: 0,
         bottom: PreferredSize(
-          preferredSize:  Size.fromHeight(1),
-          child: Container(height: 1, color: Colors.grey.withOpacity(0.4)),
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 1,
+            color: Colors.grey.withOpacity(0.4), // subtle border
+          ),
         ),
       ),
 
-      body: ListView.builder(
-        padding:  EdgeInsets.symmetric(vertical: 16),
-        itemCount: budgetData.length,
-        itemBuilder: (context, index) {
-          final item = budgetData[index];
-          return Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-            child: Customcontainer(
-              title: item['title'],
-              remainingText: item['remaining'],
-              progressText: item['progress'],
-              progressValue: item['value'],
-              targetDate: item['date'],
-              statusText: item['status'],
-              onEdit: () => print("Edit clicked"),
-              onDelete: () => print("Delete clicked"),
-            ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: budgetsRef.orderBy('createdAt', descending: true).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text("Error", style: TextStyle(color: Colors.white)),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xFF72E369)),
+            );
+          }
+
+          final docs = snapshot.data!.docs;
+
+          if (docs.isEmpty) {
+            return const Center(
+              child: Text(
+                "No Budgets Yet",
+                style: TextStyle(color: Colors.white70),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+            itemCount: docs.length,
+            itemBuilder: (context, index) {
+              final doc = docs[index];
+              final data = doc.data() as Map<String, dynamic>;
+
+              final total = data['total'] as num;
+              final spent = data['spent'] as num;
+              final progress = spent / total;
+
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.06,
+                  vertical: screenHeight * 0.01,
+                ),
+                child: Customcontainer(
+                  title: data['title'],
+                  remainingText:
+                  "${(total - spent).toInt()} remaining",
+                  progressText:
+                  "${spent.toInt()} of ${total.toInt()}",
+                  progressValue: progress,
+                  onDelete: () => _deleteBudget(doc.id),
+                  onEdit: () => _showEditBudgetBottomSheet(doc.id, data),
+                ),
+              );
+            },
           );
         },
       ),
 
-      floatingActionButton: SizedBox(
-        width: 160,
-        height: 40,
-        child: CustomButton(
-          text: "+ Add Budget",
-          onPressed: _showAddBudgetBottomSheet,
-          borderRadius: 25,
-        ),
+      floatingActionButton: CustomButton(
+        text: "+ Add Budget",
+        width: screenWidth * 0.45,
+        height: screenHeight * 0.065,
+        borderRadius: screenWidth * 0.05,
+        onPressed: _showAddBudgetBottomSheet,
       ),
     );
   }
 
   void _showAddBudgetBottomSheet() {
-    showModalBottomSheet(
+    budgetController.clear();
+
+    openCustomSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Color(0xFF121212),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setModalState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                top: 20, left: 20, right: 20,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                   Text("Category", style: TextStyle(color: Colors.white, fontSize: 16)),
-                   SizedBox(height: 10),
-                  _buildDropdownField(setModalState),
-                   SizedBox(height: 20),
-                   Text("Budget", style: TextStyle(color: Colors.white, fontSize: 16)),
-                   SizedBox(height: 10),
-                  _buildPriceTextField(),
-                   SizedBox(height: 30),
-                  _buildSaveButton(context),
-                ],
-              ),
-            );
+      title: "Add Budget",
+      fields: [
+        CustomDropdownFormField(
+          selectedCategory: selectedCategory,
+          categories: categories,
+          onChanged: (value) {
+            setState(() => selectedCategory = value);
           },
-        );
+        ),
+        const SizedBox(height: 15),
+        CustomTextField(
+          label: "Budget Amount",
+          controller: budgetController,
+          keyboardType: TextInputType.number,
+        ),
+      ],
+      actionText: "Save",
+      onAction: () async {
+        await budgetsRef.add({
+          "title": selectedCategory,
+          "total": double.parse(budgetController.text),
+          "spent": 0,
+          "createdAt": Timestamp.now(),
+        });
+
+        Navigator.pop(context);
       },
     );
   }
 
-  Widget _buildDropdownField(StateSetter setModalState) {
-    return Container(
-      padding:  EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(15)),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: selectedCategory,
-          hint:  Text("Choose a Category", style: TextStyle(color: Colors.white54)),
-          dropdownColor:  Color(0xFF1E1E1E),
-          icon:  Icon(Icons.keyboard_arrow_down, color: Colors.white),
-          isExpanded: true,
-          items: ["Food", "Transport", "Shopping", "Bills"].map((String v) =>
-              DropdownMenuItem(value: v, child: Text(v, style:  TextStyle(color: Colors.white)))
-          ).toList(),
-          onChanged: (newValue) => setModalState(() => selectedCategory = newValue),
+  void _showEditBudgetBottomSheet(
+      String docId, Map<String, dynamic> data) {
+
+    selectedCategory = data['title'];
+    budgetController.text = data['total'].toString();
+
+    openCustomSheet(
+      context: context,
+      title: "Edit Budget",
+      fields: [
+        CustomDropdownFormField(
+          selectedCategory: selectedCategory,
+          categories: categories,
+          onChanged: (value) {
+            setState(() => selectedCategory = value);
+          },
         ),
-      ),
+        const SizedBox(height: 15),
+        CustomTextField(
+          label: "Budget Amount",
+          controller: budgetController,
+          keyboardType: TextInputType.number,
+        ),
+      ],
+      actionText: "Update",
+      onAction: () async {
+        await budgetsRef.doc(docId).update({
+          "title": selectedCategory,
+          "total": double.parse(budgetController.text),
+        });
+
+        Navigator.pop(context);
+      },
     );
   }
 
-  Widget _buildPriceTextField() {
-    return TextField(
-      style:  TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        hintText: "Set Budget",
-        hintStyle: TextStyle(color: Colors.white54),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-      ),
-      keyboardType: TextInputType.number,
-    );
-  }
-
-  Widget _buildSaveButton(BuildContext context) {
-    return Align(
-      alignment: Alignment.topRight,
-      child: SizedBox(
-        width: 100, height: 45,
-        child: ElevatedButton(
-          onPressed: () => Navigator.pop(context),
-          style: ElevatedButton.styleFrom(
-            backgroundColor:  Color(0xFF00E676),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-          ),
-          child:  Text("Save", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        ),
-      ),
-    );
+  void _deleteBudget(String docId) async {
+    await budgetsRef.doc(docId).delete();
   }
 }
